@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         val screenWidth = displayMetrics.widthPixels
         val cellSize = (screenWidth * 0.9 / (cols + 1)).toInt() // x0.9 es para dejar margen
         val cellParams = TableRow.LayoutParams(cellSize, cellSize)
+        cellParams.setMargins(8, 8, 8, 8)
 
         // Recorrer filas
         for (i in 0 until rowsForTableLayout) { // rows + 1 porque añadimos una fila para botones
