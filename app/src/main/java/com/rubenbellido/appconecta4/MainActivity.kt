@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
     val cols = 7
     var board = createBoard(rows, cols)
     var turnoRojo = true
-    var tableLayout = findViewById<TableLayout>(R.id.tableLayout)
+    lateinit var tableLayout: TableLayout
     // val fichas = MutableList<MutableList<ImageView>>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        tableLayout = findViewById<TableLayout>(R.id.tableLayout)
 
         generateTableLayout(tableLayout, board)
     }
@@ -47,18 +48,22 @@ class MainActivity : AppCompatActivity() {
         val cellParams = TableRow.LayoutParams(cellSize, cellSize)
 
         // Recorrer filas
-        for (i in 0..rowsForTableLayout) { // rows + 1 porque añadimos una fila para botones
+        for (i in 0 until rowsForTableLayout) { // rows + 1 porque añadimos una fila para botones
 
             val fila = TableRow(tableLayout.context)
 
             // Recorrer columnas
-            for (j in 0..cols) {
+            for (j in 0 until cols) {
 
                 // Botones si es el encabezado
                 if (i == 0) {
                     val button = Button(this)
                     button.text = ""
                     button.layoutParams = cellParams
+
+                    button.setOnClickListener {
+                        putChipOnCol(board, j)
+                    }
 
                     fila.addView(button)
                     continue
@@ -88,7 +93,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         val row = getIndexOfEmptyRow(board, col)
-        board[row][col] = 1
+        if (row == -1) return
+
+        val value = if (turnoRojo) 1 else 2
+        board[row][col] = value
+        turnoRojo = !turnoRojo
         generateTableLayout(tableLayout, board)
     }
 
@@ -97,8 +106,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getIndexOfEmptyRow(board: Array<Array<Int>>, colToPut: Int) : Int {
-        for (i in rows..0) {
-            if (board[i][colToPut] != 0) {
+        for (i in (rows-1) downTo 0) {
+            if (board[i][colToPut] == 0) {
                 return i
             }
         }
